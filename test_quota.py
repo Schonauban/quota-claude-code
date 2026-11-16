@@ -60,7 +60,7 @@ class Quota(unittest.TestCase):
 
     def test_baisse_pas_comptee(self):
         self.barre(80)
-        self.barre(10)          # changement de compte ou remise à zéro
+        self.barre(10)          # remise à zéro du quota
         self.assertFalse((Path(self.tmp.name) / "historique.jsonl").exists())
 
     def test_rien_tant_que_loin(self):

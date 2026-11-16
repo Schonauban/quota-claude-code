@@ -13,7 +13,7 @@ pas d'arrêt forcé.
   etat    état de toutes les sessions de la machine.
 
 Le coût d'un tour est MESURÉ : la plus forte des 5 dernières hausses du quota
-entre deux passages de la barre. Le quota est celui du compte : les autres
+entre deux passages de la barre. Le quota est partagé par les sessions : les autres
 sessions ouvertes gonflent la hausse, la marge n'en est que plus prudente.
 Données : ~/.cache/quota/ (QUOTA_BASE pour les tests). Rien ne sort de la machine.
 """
@@ -99,7 +99,7 @@ def noter_hausse(sid, avant, apres):
     for q, r, d in (("q5", "r5", "d5"), ("q7", "r7", "d7")):
         a, b = avant.get(q), apres.get(q)
         if a is None or b is None or b <= a:
-            continue                       # baisse : remise à zéro ou changement de compte
+            continue                       # baisse : remise à zéro du quota
         if abs((avant.get(r) or 0) - (apres.get(r) or 0)) > 300:
             continue                       # changement de fenêtre : pas une hausse
         ligne[d] = round(b - a, 2)
@@ -236,7 +236,7 @@ def annonce(a, g, maintenant=None):
             messages.append(texte_alerte(a))
             g["niveau"], g["t"] = niveau, t
     elif g.get("niveau") in ("alerte", "arret"):
-        g["niveau"] = "ok"            # quota remis à zéro ou autre compte : on pourra réannoncer
+        g["niveau"] = "ok"            # quota remis à zéro : on pourra réannoncer
     if a.get("lourd") and (not g.get("ctx") or a["ctx"] >= g["ctx"] + 10):
         messages.append("quota — CONTEXTE LOURD : %s du contexte utilisé. Chaque tour coûte plus "
                         "cher : termine la tâche ou consigne-la pour une session neuve." % pct(a["ctx"]))
